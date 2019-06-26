@@ -1,0 +1,33 @@
+.container {
+	display: flex;
+}
+#map {
+	margin-left: 200px;
+	margin-right: 50px;
+	height: 600px;
+	width: 800px;
+}
+#id {
+	flex: 1;
+}
+table {
+	border-collapse: collapse;
+}
+tr {
+	border: 1px solid #000;
+}
+th {
+	text-align: left;
+	padding-left: 30px;
+	padding-bottom: 25px;
+	padding-right: 15px;
+}
+td {
+	text-align: center;
+	padding-top: 40px;
+	padding-bottom: 20px;
+	padding-right: 10px;
+}
+#makerReset {
+	padding: 5px 40px;
+}
