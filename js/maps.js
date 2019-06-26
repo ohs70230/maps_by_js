@@ -1,4 +1,5 @@
 var currentInfoWindow = null;
+var markers = []								//参照を開放
 
 function getMap() {
 	geocoder = new google.maps.Geocoder()
@@ -42,27 +43,21 @@ function getMap() {
 				}
 				map = new google.maps.Map(document.getElementById('map'), opts)
 				// マーカー情報の生成
-				markers = []	//参照を開放
-				var marker = new google.maps.Marker({
+				var markerFirst = new google.maps.Marker({
 					position: latlng,
 					map: map,
 					icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png'
 				})
-				// InfoWindowを追加
-				var infoWindow = new google.maps.InfoWindow({
-					content: '大阪市北区梅田3-3-1',
-				})
+				var infoWindow = new google.maps.InfoWindow({content: '大阪市北区梅田3-3-1'})	// InfoWindowを追加
 				// マーカーにイベントを付与する
-				marker.addListener('click', function() {
+				markerFirst.addListener('click', function() {
 					// 他で開かれているInfoWindowを閉じる
 					if (currentInfoWindow) {
 						currentInfoWindow.close()
 					}
-					infoWindow.open(map, marker)
+					infoWindow.open(map, markerFirst)
 					currentInfoWindow = infoWindow
 				})
-				// マーカ追加
-				markers.push(marker)
 			}
 		}
 	)
@@ -129,5 +124,5 @@ function deleteMakers() {
 	for (var i = 0; i < markers.length; i++) {
 			markers[i].setMap(null);
 	}
-	markers = []											//参照を開放
+	markers = []											// 参照を開放
 }
