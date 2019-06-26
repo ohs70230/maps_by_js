@@ -117,7 +117,6 @@
 		console.log('zoomControl変更')
 	})
 
-
 	$('#sendGeocode').on('click', function() {
 		console.log("sendGeocodeが押された")
 		geocoding()
