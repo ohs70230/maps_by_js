@@ -1,36 +1,71 @@
 var currentInfoWindow = null;
 
 function getMap() {
-	var latlng = new google.maps.LatLng(34.699875, 135.493032)
-	var opts = {
-		zoom: 14,
-		center: latlng,
-		mapTypeId: google.maps.MapTypeId.ROADMAP
-	}
-	map = new google.maps.Map(document.getElementById('map'), opts)
-
-	// マーカー情報の生成
-	markers = []	//参照を開放
-	var marker = new google.maps.Marker({
-		position: latlng,
-		map: map,
-		icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png'
-	})
-	// InfoWindowを追加
-	var infoWindow = new google.maps.InfoWindow({
-		content: '大阪市北区梅田3-3-1',
-	})
-	// マーカーにイベントを付与する
-	marker.addListener('click', function() {
-		// 他で開かれているInfoWindowを閉じる
-		if (currentInfoWindow) {
-			currentInfoWindow.close()
+	geocoder = new google.maps.Geocoder()
+	geocoder.geocode(
+		{'address': '大阪市北区梅田3-3-1'},
+		function (results, status) {						// geocodeデータ取得成功
+			if (status == google.maps.GeocoderStatus.OK) {
+				console.log('map読み込み(検索) 成功')
+				var latlng = results[0].geometry.location	// 取得した座標
+				// 現在位置のlatlngを取得
+				if (navigator.geolocation) {
+					navigator.geolocation.getCurrentPosition(
+						function (position) {
+							console.log("位置情報が取得できました")
+							latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+						},
+						function (error) {
+							switch(error.code) {
+								case 1:
+									alert("位置情報の利用が許可されていません")
+									break
+								case 2:
+									alert("現在位置が取得できませんでした")
+									break
+								case 3:
+									alert("タイムアウトになりました")
+									break
+								default:
+									alert("その他のエラー(エラーコード:" + error.code +")")
+							}
+						}
+					)
+				}
+				else {
+					alert("この端末では位置情報は取得できません")
+				}
+				var opts = {
+					zoom: 14,
+					center: latlng,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				}
+				map = new google.maps.Map(document.getElementById('map'), opts)
+				// マーカー情報の生成
+				markers = []	//参照を開放
+				var marker = new google.maps.Marker({
+					position: latlng,
+					map: map,
+					icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png'
+				})
+				// InfoWindowを追加
+				var infoWindow = new google.maps.InfoWindow({
+					content: '大阪市北区梅田3-3-1',
+				})
+				// マーカーにイベントを付与する
+				marker.addListener('click', function() {
+					// 他で開かれているInfoWindowを閉じる
+					if (currentInfoWindow) {
+						currentInfoWindow.close()
+					}
+					infoWindow.open(map, marker)
+					currentInfoWindow = infoWindow
+				})
+				// マーカ追加
+				markers.push(marker)
+			}
 		}
-		infoWindow.open(map, marker)
-		currentInfoWindow = infoWindow
-	})
-	// マーカ追加
-	markers.push(marker)
+	)
 }
 
 function geocoding() {
@@ -41,7 +76,6 @@ function geocoding() {
 			if (status == google.maps.GeocoderStatus.OK) {
 				console.log('map読み込み(検索) 成功')
 				var latlng = results[0].geometry.location	// 取得した座標
-
 				// マーカー情報の生成
 				var marker = new google.maps.Marker({
 					position: latlng,
@@ -61,14 +95,9 @@ function geocoding() {
 					infoWindow.open(map, marker)
 					currentInfoWindow = infoWindow
 				})
-				// マーカ追加
-				markers.push(marker)
-
-				// google.maps.Map()コンストラクタに定義されているsetCenter()メソッドで、geocodeから出力した座標latlngを地図の中心点に設定する。
-				map.setCenter(latlng)
-
-				// マーカー追加先にズームする
-				map.setZoom(16.5)
+				markers.push(marker)						// マーカ追加
+				map.setCenter(latlng)						// google.maps.Map()コンストラクタに定義されているsetCenter()メソッドで、geocodeから出力した座標latlngを地図の中心点に設定する。
+				map.setZoom(16.5)							// マーカー追加先にズームする
 			}
 			else {											// geocodeデータ取得失敗
 				console.log('map読み込み失敗。APIキーに問題あり？')
@@ -92,8 +121,7 @@ function maptypeSwitch() {
 		default:
 			var opt = {mapTypeId: google.maps.MapTypeId.ROADMAP}
 	}
-	// オプション変更を適用
-	map.setOptions(opt);
+	map.setOptions(opt);									// オプション変更を適用
 }
 
 function deleteMakers() {
@@ -101,5 +129,5 @@ function deleteMakers() {
 	for (var i = 0; i < markers.length; i++) {
 			markers[i].setMap(null);
 	}
-	markers = []	//参照を開放
+	markers = []											//参照を開放
 }
