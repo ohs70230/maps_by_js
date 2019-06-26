@@ -1,14 +1,15 @@
 var currentInfoWindow = null;
-var markers = []								//参照を開放
+var markers = []														//参照を開放
 
 function getMap() {
 	geocoder = new google.maps.Geocoder()
 	geocoder.geocode(
 		{'address': '大阪市北区梅田3-3-1'},
-		function (results, status) {						// geocodeデータ取得成功
+		function (results, status) {									// geocodeデータ取得成功
 			if (status == google.maps.GeocoderStatus.OK) {
 				console.log('map読み込み(検索) 成功')
-				var latlng = results[0].geometry.location	// 取得した座標
+				var latlng = results[0].geometry.location				// 初期値のジオコードより取得した座標
+
 				// 現在位置のlatlngを取得
 				if (navigator.geolocation) {
 					navigator.geolocation.getCurrentPosition(
@@ -36,28 +37,31 @@ function getMap() {
 				else {
 					alert("この端末では位置情報は取得できません")
 				}
+
 				var opts = {
 					zoom: 14,
 					center: latlng,
 					mapTypeId: google.maps.MapTypeId.ROADMAP
 				}
 				map = new google.maps.Map(document.getElementById('map'), opts)
+
 				// マーカー情報の生成
 				var markerFirst = new google.maps.Marker({
 					position: latlng,
 					map: map,
 					icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png'
 				})
-				var infoWindow = new google.maps.InfoWindow({content: '大阪市北区梅田3-3-1'})	// InfoWindowを追加
+				var infoWindow = new google.maps.InfoWindow({content: '大阪市北区梅田3-3-1'})				// InfoWindowを追加
+
 				// マーカーにイベントを付与する
 				markerFirst.addListener('click', function() {
-					// 他で開かれているInfoWindowを閉じる
-					if (currentInfoWindow) {
-						currentInfoWindow.close()
-					}
+					if (currentInfoWindow) currentInfoWindow.close()	// 他で開かれているInfoWindowを閉じる
 					infoWindow.open(map, markerFirst)
 					currentInfoWindow = infoWindow
 				})
+			}
+			else {														// geocodeデータ取得失敗
+				console.log('map読み込み失敗。APIキーに問題あり')
 			}
 		}
 	)
@@ -67,62 +71,59 @@ function geocoding() {
 	geocoder = new google.maps.Geocoder()
 	geocoder.geocode(
 		{'address': $("[name='geocode']").val(), 'language': 'ja'},
-		function (results, status) {						// geocodeデータ取得成功
+		function (results, status) {									// geocodeデータ取得成功
 			if (status == google.maps.GeocoderStatus.OK) {
 				console.log('map読み込み(検索) 成功')
-				var latlng = results[0].geometry.location	// 取得した座標
+				var latlng = results[0].geometry.location				// 取得した座標
+
 				// マーカー情報の生成
 				var marker = new google.maps.Marker({
 					position: latlng,
 					map: map,
 					icon: 'http://maps.google.com/mapfiles/ms/micons/blue-dot.png'
 				})
-				// InfoWindowを追加
-				var infoWindow = new google.maps.InfoWindow({
-					content: $("[name='geocode']").val()
-				})
+				var infoWindow = new google.maps.InfoWindow({content: $("[name='geocode']").val()})		// InfoWindowを追加
+
 				// マーカーにイベントを付与する
 				marker.addListener('click', function() {
-					// 他で開かれているInfoWindowを閉じる
-					if (currentInfoWindow) {
-						currentInfoWindow.close()
-					}
+					if (currentInfoWindow) currentInfoWindow.close()	// 他で開かれているInfoWindowを閉じる
 					infoWindow.open(map, marker)
 					currentInfoWindow = infoWindow
 				})
-				markers.push(marker)						// マーカ追加
-				map.setCenter(latlng)						// google.maps.Map()コンストラクタに定義されているsetCenter()メソッドで、geocodeから出力した座標latlngを地図の中心点に設定する。
-				map.setZoom(16.5)							// マーカー追加先にズームする
+				markers.push(marker)									// マーカ追加
+				$("[name='geocode']").val('')							// ジオコード入力欄リセット
+				map.setCenter(latlng)									// google.maps.Map()コンストラクタに定義されているsetCenter()メソッドで、geocodeから出力した座標latlngを地図の中心点に設定する。
+				map.setZoom(16.5)										// マーカー追加先にズームする
 			}
-			else {											// geocodeデータ取得失敗
-				console.log('map読み込み失敗。APIキーに問題あり？')
+			else {														// geocodeデータ取得失敗
+				console.log('map読み込み失敗。通信状態に問題あり')
 			}
 		}
 	)
 }
 
 function maptypeSwitch() {
-	switch ($("[name='maptype']").val()) {
-		case 'SATELLITE':
+	switch (parseInt($("[name='maptype']").val(), 10)) {				// val()はstring型の為10進数のint型に変換
+		case 2:
 			var opt = {mapTypeId: google.maps.MapTypeId.SATELLITE}
 			break
-		case 'HYBRID':
-			var opt = {mapTypeId: google.maps.MapTypeId.SATELLITE}
+		case 3:
+			var opt = {mapTypeId: google.maps.MapTypeId.HYBRID}
 			break
-		case 'TERRAIN':
-			var opt = {mapTypeId: google.maps.MapTypeId.SATELLITE}
+		case 4:
+			var opt = {mapTypeId: google.maps.MapTypeId.TERRAIN}
 			break
-		case 'ROADMAP':
+		case 1:
 		default:
 			var opt = {mapTypeId: google.maps.MapTypeId.ROADMAP}
 	}
-	map.setOptions(opt);									// オプション変更を適用
+	map.setOptions(opt);												// オプション変更を適用
 }
 
+//生成済マーカーを順次すべて削除する
 function deleteMakers() {
-	//生成済マーカーを順次すべて削除する
 	for (var i = 0; i < markers.length; i++) {
 			markers[i].setMap(null);
 	}
-	markers = []											// 参照を開放
+	markers = []														// 参照を開放
 }
