@@ -122,6 +122,12 @@
 		console.log("sendGeocodeが押された")
 		geocoding()
 	})
+
+	$('#makerReset').on('click', function() {
+		console.log("makerResetが押された")
+		deleteMakers()
+	})
+
 </script>
 <!-- <script src="https://maps.googleapis.com/maps/api/js?key=APIKEY&callback=getMap" async defer></script> -->
 </body>
