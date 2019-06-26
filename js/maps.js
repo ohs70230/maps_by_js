@@ -8,7 +8,7 @@ function getMap() {
 	map = new google.maps.Map(document.getElementById('map'), opts)
 
 	// マーカーの配列
-	markers = []
+	markers = []	//参照を開放
 	marker = new google.maps.Marker({
 		position: latlng,
 		map: map,
@@ -60,4 +60,12 @@ function maptypeSwitch() {
 
 	// オプション変更を適用
 	map.setOptions(opt);
+}
+
+function deleteMakers() {
+	//生成済マーカーを順次すべて削除する
+	for (var i = 0; i < markers.length; i++) {
+			markers[i].setMap(null);
+	}
+	markers = []	//参照を開放
 }
