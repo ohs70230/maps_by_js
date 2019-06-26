@@ -20,10 +20,10 @@
 				<th>地図の種類</th>
 				<td>
 					<select name="maptype" onchange="maptypeSwitch()">
-						<option value="ROADMAP">ロードマップ</option>
-						<option value="SATELLITE">衛生写真</option>
-						<option value="HYBRID">ロードマップ / 衛生写真</option>
-						<option value="TERRAIN">地形情報</option>
+						<option value="1">ロードマップ</option>
+						<option value="2">衛生写真</option>
+						<option value="3">ロードマップ / 衛生写真</option>
+						<option value="4">地形情報</option>
 					</select>
 				</td>
 			</tr>
@@ -31,7 +31,7 @@
 				<th>マップタイプ</th>
 				<td>
 					<div class="toggle-buttons">
-						<input type="radio" name="mapTypeControl" value="true" onchange="map.setOptions({mapTypeControl:true})">
+						<input type="radio" name="mapTypeControl" value="true" onchange="map.setOptions({mapTypeControl:true})" checked>
 						<label for="on" class="switch-on">有効</span></label>
 						<input type="radio" name="mapTypeControl" value="false" onchange="map.setOptions({mapTypeControl:false})">
 						<label for="off" class="switch-off">無効</span></label>
@@ -42,7 +42,7 @@
 				<th>全画面表示</th>
 				<td>
 					<div class="toggle-buttons">
-						<input type="radio" name="fullscreenControl" value="true" onchange="map.setOptions({fullscreenControl:true})">
+						<input type="radio" name="fullscreenControl" value="true" onchange="map.setOptions({fullscreenControl:true})" checked>
 						<label for="on" class="switch-on">有効</span></label>
 						<input type="radio" name="fullscreenControl" value="false" onchange="map.setOptions({fullscreenControl:false})">
 						<label for="off" class="switch-off">無効</span></label>
@@ -53,7 +53,7 @@
 				<th>ストリートビュー</th>
 				<td>
 					<div class="toggle-buttons">
-						<input type="radio" name="streetViewControl" value="true" onchange="map.setOptions({streetViewControl:true})">
+						<input type="radio" name="streetViewControl" value="true" onchange="map.setOptions({streetViewControl:true})" checked>
 						<label for="on" class="switch-on">有効</span></label>
 						<input type="radio" name="streetViewControl" value="false" onchange="map.setOptions({streetViewControl:false})">
 						<label for="off" class="switch-off">無効</span></label>
@@ -64,7 +64,7 @@
 				<th>ズーム</th>
 				<td>
 					<div class="toggle-buttons">
-						<input type="radio" name="zoomControl" value="true" onchange="map.setOptions({zoomControl:true})">
+						<input type="radio" name="zoomControl" value="true" onchange="map.setOptions({zoomControl:true})" checked>
 						<label for="on" class="switch-on">有効</span></label>
 						<input type="radio" name="zoomControl" value="false" onchange="map.setOptions({zoomControl:false})">
 						<label for="off" class="switch-off">無効</span></label>
@@ -97,33 +97,11 @@
 		getMap()
 	})
 
-	$('[name="maptype"]').on('change', function() {
-		console.log('mapType変更')
-	})
-
-	$('[name="mapTypeControl"]').on('change', function() {
-		console.log('mapTypeControl変更')
-	})
-
-	$('[name="fullscreenControl"]').on('change', function() {
-		console.log('fullscreenControl変更')
-	})
-
-	$('[name="streetViewControl"]').on('change', function() {
-		console.log('streetViewControl変更')
-	})
-
-	$('[name="zoomControl"]').on('change', function() {
-		console.log('zoomControl変更')
-	})
-
 	$('#sendGeocode').on('click', function() {
-		console.log("sendGeocodeが押された")
 		geocoding()
 	})
 
 	$('#makerReset').on('click', function() {
-		console.log("makerResetが押された")
 		deleteMakers()
 	})
 
