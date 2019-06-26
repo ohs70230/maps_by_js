@@ -1,3 +1,5 @@
+var currentInfoWindow = null;
+
 function getMap() {
 	var latlng = new google.maps.LatLng(34.699875, 135.493032)
 	var opts = {
@@ -7,12 +9,27 @@ function getMap() {
 	}
 	map = new google.maps.Map(document.getElementById('map'), opts)
 
-	// マーカーの配列
+	// マーカー情報の生成
 	markers = []	//参照を開放
-	marker = new google.maps.Marker({
+	var marker = new google.maps.Marker({
 		position: latlng,
 		map: map,
+		icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png'
 	})
+	// InfoWindowを追加
+	var infoWindow = new google.maps.InfoWindow({
+		content: '大阪市北区梅田3-3-1',
+	})
+	// マーカーにイベントを付与する
+	marker.addListener('click', function() {
+		// 他で開かれているInfoWindowを閉じる
+		if (currentInfoWindow) {
+			currentInfoWindow.close()
+		}
+		infoWindow.open(map, marker)
+		currentInfoWindow = infoWindow
+	})
+	// マーカ追加
 	markers.push(marker)
 }
 
@@ -25,15 +42,33 @@ function geocoding() {
 				console.log('map読み込み(検索) 成功')
 				var latlng = results[0].geometry.location	// 取得した座標
 
-				// マーカー追加
-				marker = new google.maps.Marker({
+				// マーカー情報の生成
+				var marker = new google.maps.Marker({
 					position: latlng,
 					map: map,
+					icon: 'http://maps.google.com/mapfiles/ms/micons/blue-dot.png'
 				})
+				// InfoWindowを追加
+				var infoWindow = new google.maps.InfoWindow({
+					content: $("[name='geocode']").val()
+				})
+				// マーカーにイベントを付与する
+				marker.addListener('click', function() {
+					// 他で開かれているInfoWindowを閉じる
+					if (currentInfoWindow) {
+						currentInfoWindow.close()
+					}
+					infoWindow.open(map, marker)
+					currentInfoWindow = infoWindow
+				})
+				// マーカ追加
 				markers.push(marker)
 
 				// google.maps.Map()コンストラクタに定義されているsetCenter()メソッドで、geocodeから出力した座標latlngを地図の中心点に設定する。
 				map.setCenter(latlng)
+
+				// マーカー追加先にズームする
+				map.setZoom(16.5)
 			}
 			else {											// geocodeデータ取得失敗
 				console.log('map読み込み失敗。APIキーに問題あり？')
@@ -57,7 +92,6 @@ function maptypeSwitch() {
 		default:
 			var opt = {mapTypeId: google.maps.MapTypeId.ROADMAP}
 	}
-
 	// オプション変更を適用
 	map.setOptions(opt);
 }
